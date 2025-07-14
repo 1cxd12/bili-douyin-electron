@@ -1,39 +1,99 @@
-name: Build Windows EXE
+名字：构建Windows EXE
 
-on:
-  push:
-    branches: [ main ]
-    tags:
+在请将网页文本输入到内容区域，我会帮助你翻译成简体中文。
+  推:
+    分支：[ 主分支 ]
+    标签：
       - '*'
-  workflow_dispatch:
+  工作流触发:
 
-jobs:
-  build:
-    runs-on: windows-latest
+工作：
+  构建：
+    运行于：windows-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    步骤：
+      - 名字: 结账代码
+        用途：actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+      - 名字: 设置 Node.js
+        用途：actions/setup-node@v4
+        与：
+          节点版本：18
 
-      - name: Install dependencies
-        run: npm install
+      - 名字: 安装依赖
+        运行： npm install
 
-      - name: Build exe with electron-packager and include ffmpeg.dll/icudtl.dat
-        run: |
-          npx electron-packager . BiliDouyinTool --platform=win32 --arch=x64 --icon=icon.ico --out=dist --overwrite --prune=false
-          copy node_modules\electron\dist\ffmpeg.dll dist\BiliDouyinTool-win32-x64\ffmpeg.dll
-          copy node_modules\electron\dist\icudtl.dat dist\BiliDouyinTool-win32-x64\icudtl.dat
+      - 名字: 使用 electron-packager 构建 exe 并包含 ffmpeg.dll/icudtl.dat
+        运行： |
+          npx electron-packager . 哔哩抖音工具 --平台=win32 --架构=x64 --图标=icon.ico --输出=dist --覆盖 --修剪=false
+          复制 node_modules\electron\dist\ffmpeg.dll 到 dist\BiliDouyinTool-win32-x64\ffmpeg.dll
+          复制 node_modules\electron\dist\icudtl.dat 到 dist\BiliDouyinTool-win32-x64\icudtl.dat
 
-      - name: Upload exe as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: BiliDouyinTool-exe
-          path: |
+      - 名字: 上传可执行文件作为制品
+        用途：actions/upload-artifact@v4
+        与：
+          名字: BiliDouyinTool-可执行文件
+          路径: |
             dist/BiliDouyinTool-win32-x64/BiliDouyinTool.exe
             dist/BiliDouyinTool-win32-x64/ffmpeg.dll
-            dist/BiliDouyinTool-win32-x64/icudtl.dat
+            dist/哔哩抖音工具-win32-x64/icudtl.dat
+名称：构建和打包Electron应用程序
+
+在:
+  推:
+    分支:
+      - 主页
+    标签:
+      - '*'
+
+工作:
+  构建:
+    运行于：Windows-latest
+
+    步骤:
+      - 名称: 结账代码
+        使用：actions/checkout@v3
+
+      - 名称: 设置 Node.js
+        使用：actions/setup-node@v3
+        与:
+          节点版本：18
+
+      - 名称: 安装依赖项
+        运行： npm install
+
+      - 名称: 构建应用程序（如有）
+        运行： npm run build
+        继续执行错误：真
+
+      - 名称: 打包Electron应用
+        运行：npx electron-packager . my-app --platform=win32 --arch=x64 --out=dist --overwrite
+
+      - 名称: 复制Electron运行时文件
+        运行： |
+          $electronDist = "node_modules/electron/dist"
+          $appDist = Get-ChildItem -Path dist -Directory | Select-Object -First 1
+          复制文件 "electronDist\ffmpeg.dll" 到 "appDist\"
+
+          复制文件 "electronDist\icudtl.dat" 到 "appDist\"
+
+          复制项目 "$electronDist\snapshot_blob.bin" "$appDist\"
+          复制文件 "electronDist\d3dcompiler_47.dll" 到 "appDist\"
+
+          复制文件 "electronDist\libEGL.dll" 到 "appDist\"
+
+          复制文件 "electronDist\libGLESv2.dll" 到 "appDist\"
+
+        shell：pwsh
+
+      - 名称: 压缩包
+        运行： |
+          $appDist = Get-ChildItem -Path dist -Directory | Select-Object -First 1
+          Compress-Archive -Path "$appDist\*" -DestinationPath "my-app-win.zip"
+        shell：pwsh
+
+      - 名称: 上传工件
+        使用：actions/upload-artifact@v3
+        与:
+          名称：my-app-win
+          路径: my-app-win.zip
