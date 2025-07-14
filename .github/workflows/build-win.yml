@@ -1,61 +1,55 @@
-名称：构建和打包Electron应用程序
+name: Build and Package Electron App
 
-在
-请将网页文本输入到内容区域，我将为您进行翻译。
-  推请将网页文本输入到内容区域，我将为您进行翻译。
-    分支：
-      - 主页
-    标签：
+on:
+  push:
+    branches:
+      - main
+    tags:
       - '*'
 
-工作：
-  构建：
-    运行于：Windows-latest
+jobs:
+  build:
+    runs-on: windows-latest
 
-    步骤：
-      - 名称: 结账代码
-        使用：actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - 名称: 设置 Node.js
-        使用：actions/setup-node@v3
-        和：
-          节点版本： 18
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-      - 名称：安装依赖项
-        运行：npm install
+      - name: Install dependencies
+        run: npm install
 
-      - 名称: 构建应用程序（如有）
-        运行：npm run build
-        继续执行错误：真
+      - name: Build app (if needed)
+        run: npm run build
+        continue-on-error: true
 
-      - 名称: 打包Electron应用
-        运行：npx electron-packager . my-app --platform=win32 --arch=x64 --out=dist --overwrite
+      - name: Package Electron app
+        run: npx electron-packager . my-app --platform=win32 --arch=x64 --out=dist --overwrite
 
-      - 名称: 复制Electron运行时文件
-        运行： |
+      - name: Copy Electron runtime files
+        run: |
           $electronDist = "node_modules/electron/dist"
-          $appDist = 获取子项 - 路径 dist - 目录 | 选择对象 - 第一个
-          复制文件 "electronDist\ffmpeg.dll" 到 "appDist\"
+          $appDist = Get-ChildItem -Path dist -Directory | Select-Object -First 1
+          Copy-Item "$electronDist\ffmpeg.dll" "$appDist\"
+          Copy-Item "$electronDist\icudtl.dat" "$appDist\"
+          Copy-Item "$electronDist\snapshot_blob.bin" "$appDist\"
+          Copy-Item "$electronDist\d3dcompiler_47.dll" "$appDist\"
+          Copy-Item "$electronDist\libEGL.dll" "$appDist\"
+          Copy-Item "$electronDist\libGLESv2.dll" "$appDist\"
+        shell: pwsh
 
-          复制项目 “$electronDist\icudtl.dat” “$appDist\"”
-          复制项目 "$electronDist\snapshot_blob.bin" "$appDist\"
-          复制文件 "electronDist\d3dcompiler_47.dll" 到 "appDist\"
+      - name: Zip package
+        run: |
+          $appDist = Get-ChildItem -Path dist -Directory | Select-Object -First 1
+          Compress-Archive -Path "$appDist\*" -DestinationPath "my-app-win.zip"
+        shell: pwsh
 
-          复制文件 "electronDist\libEGL.dll" 到 "appDist\"
-
-          复制文件 "electronDist\libGLESv2.dll" 到 "appDist\"
-
-        壳：pwsh
-
-      - 名称: 压缩包
-        运行： |
-          $appDist = 获取子项 - 路径 dist - 目录 | 选择对象 - 第一个
-          压缩-归档 -路径 "应用分发\*"
- -目标路径 "my-app-win.zip"
-        壳：pwsh
-
-      - 名称：上传工件
-        使用：actions/upload-artifact@v3
-        和：
-          名称：my-app-win
-          路径: my-app-win.zip
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-app-win
+          path: my-app-win.zip
