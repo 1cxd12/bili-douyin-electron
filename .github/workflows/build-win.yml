@@ -27,9 +27,8 @@ jobs:
         run: |
           npx electron-packager . BiliDouyinTool --platform=win32 --arch=x64 --icon=icon.ico --out=dist --overwrite
 
-      - name: Upload exe to GitHub Releases
-        uses: softprops/action-gh-release@v2
+      - name: Upload exe as artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: dist/BiliDouyinTool-win32-x64/BiliDouyinTool.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: BiliDouyinTool-exe
+          path: dist/BiliDouyinTool-win32-x64/BiliDouyinTool.exe
