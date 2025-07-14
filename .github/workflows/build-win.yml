@@ -1,39 +1,39 @@
-名称：构建 Windows EXE
+name: Build Windows EXE
 
-在请将网页文本输入到内容区域，我将为您进行翻译。
-  推:
-    分支：[ 主 ]
-    标签：
+on:
+  push:
+    branches: [ main ]
+    tags:
       - '*'
-  工作流触发:
+  workflow_dispatch:
 
-工作：
-  构建：
-    运行于：Windows-latest
+jobs:
+  build:
+    runs-on: windows-latest
 
-    步骤：
-      - 名称: 结账代码
-        使用：actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - 名称: 设置 Node.js
-        使用：actions/setup-node@v4
-        与：
-          节点版本： 18
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-      - 名称: 安装依赖项
-        运行：npm install
+      - name: Install dependencies
+        run: npm install
 
-      - 名称: 使用 electron-packager 构建 exe 并包含 ffmpeg.dll/icudtl.dat
-        运行： |
-          npx electron-packager . 哔哩抖音工具 --平台=win32 --架构=x64 --图标=icon.ico --输出=dist --覆盖 --修剪=false
-          复制 node_modules\electron\dist\ffmpeg.dll 到 dist\BiliDouyinTool-win32-x64\ffmpeg.dll
-          复制 node_modules\electron\dist\icudtl.dat 到 dist\BiliDouyinTool-win32-x64\icudtl.dat
+      - name: Build exe with electron-packager and include ffmpeg.dll/icudtl.dat
+        run: |
+          npx electron-packager . BiliDouyinTool --platform=win32 --arch=x64 --icon=icon.ico --out=dist --overwrite --prune=false
+          copy node_modules\electron\dist\ffmpeg.dll dist\BiliDouyinTool-win32-x64\ffmpeg.dll
+          copy node_modules\electron\dist\icudtl.dat dist\BiliDouyinTool-win32-x64\icudtl.dat
 
-      - 名称: 上传exe作为artifactory
-        使用：actions/upload-artifact@v4
-        与：
-          名称：BiliDouyinTool-exe
-          路径: |
+      - name: Upload exe as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BiliDouyinTool-exe
+          path: |
             dist/BiliDouyinTool-win32-x64/BiliDouyinTool.exe
             dist/BiliDouyinTool-win32-x64/ffmpeg.dll
             dist/BiliDouyinTool-win32-x64/icudtl.dat
