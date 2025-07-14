@@ -23,12 +23,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build exe with electron-packager
+      - name: Build exe with electron-packager and include ffmpeg.dll
         run: |
-          npx electron-packager . BiliDouyinTool --platform=win32 --arch=x64 --icon=icon.ico --out=dist --overwrite
+          npx electron-packager . BiliDouyinTool --platform=win32 --arch=x64 --icon=icon.ico --out=dist --overwrite --prune=false
+          copy node_modules\electron\dist\ffmpeg.dll dist\BiliDouyinTool-win32-x64\ffmpeg.dll
 
       - name: Upload exe as artifact
         uses: actions/upload-artifact@v4
         with:
           name: BiliDouyinTool-exe
-          path: dist/BiliDouyinTool-win32-x64/BiliDouyinTool.exe
+          path: |
+            dist/BiliDouyinTool-win32-x64/BiliDouyinTool.exe
+            dist/BiliDouyinTool-win32-x64/ffmpeg.dll
