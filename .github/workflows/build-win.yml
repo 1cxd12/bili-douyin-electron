@@ -1,0 +1,33 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build exe with electron-packager
+        run: |
+          npx electron-packager . BiliDouyinTool --platform=win32 --arch=x64 --icon=icon.ico --out=dist --overwrite
+
+      - name: Upload exe to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/BiliDouyinTool-win32-x64/BiliDouyinTool.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
