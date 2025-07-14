@@ -1,33 +1,35 @@
-name: Build Windows EXE
+名字：构建Windows EXE
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+在：
+  推:
+    分支：[ 主 ]
+    标签：
+      - '*'
+  工作流触发:
 
-jobs:
-  build:
-    runs-on: windows-latest
+工作：
+  构建：
+    运行于：windows-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    步骤：
+      - 名字：结账代码
+        用途：actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+      - 名字: 设置 Node.js
+        用途：actions/setup-node@v4
+        与：
+          节点版本：18
 
-      - name: Install dependencies
-        run: npm install
+      -名字：安装依赖
+        运行：npm install
 
-      - name: Build exe with electron-packager
-        run: |
+      - 名字: 使用 electron-packager 构建 exe 文件
+        运行： |
           npx electron-packager . BiliDouyinTool --platform=win32 --arch=x64 --icon=icon.ico --out=dist --overwrite
 
-      - name: Upload exe to GitHub Releases
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/BiliDouyinTool-win32-x64/BiliDouyinTool.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - 名字: 将exe上传到GitHub Releases
+        用途：软道具/行动-gh-发布@v2
+        与：
+          文件：dist/BiliDouyinTool-win32-x64/BiliDouyinTool.exe
+        环境：
+          GITHUB_TOKEN:           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}{{ secrets.GITHUB_TOKEN }}
