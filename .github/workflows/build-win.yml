@@ -1,38 +1,3 @@
-名字：构建Windows EXE
-
-在：
-  推请将网页文本输入到内容区域，我将为您进行翻译。
-    分支：[ 主 ][ 主 ]
-    标签：
-      - '*'
-  工作流触发:
-
-工作：
-  构建：
-    运行于：windows-latest
-
-    步骤：
-      -       - 名字：结账代码
-        用途：actions/checkout@v4
-
-      - 名字:       - 名字: 设置 Node.js
-        用途：actions/setup-node@v4
-        与：
-          节点版本：18
-
-      -名字：安装依赖
-        运行：npm install
-
-      - 名字:       - 名字: 使用 electron-packager 构建 exe 文件
-        运行： |
-          npx electron-packager . 哔哩抖音工具 --平台=win32 --架构=x64 --图标=icon.ico --输出=dist --覆盖
-
-      - 名字:       - 名字: 将exe上传到GitHub Releases
-        用途：软道具/行动-gh-发布@v2
-        与：
-          文件：dist/BiliDouyinTool-win32-x64/BiliDouyinTool.exe
-        环境：
-          GITHUB_TOKEN:                     GITHUB_TOKEN:           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}{{ secrets.GITHUB_TOKEN }}: ${{ secrets.GITHUB_TOKEN }}{{ secrets.GITHUB_TOKEN }}
 name: Build Windows EXE
 
 on:
